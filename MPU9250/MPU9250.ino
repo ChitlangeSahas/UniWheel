@@ -1,17 +1,22 @@
 #include <Wire.h>
 #include <Kalman.h>
+#include <PID_v1.h>
+#include <VescUart.h>
 #define RESTRICT_PITCH          // Comment out to restrict roll to ±90deg instead - please read: http://www.freescale.com/files/sensors/doc/app_note/AN3461.pdf
 #define SENS_ID 0x73            // Sensor Id for mpu 9250
-
+#define VESC_SERIAL_PORT Serial3
+#define MAX_DUTY_CYCLE 100      // Max Duty Cycle for the Motor. (% of Max Speed the motor is allowed to go.)
 /* Kalman filter constants */
 float Q_angle = 0.001; 
-float Q_bias = 0.00003;
-float R_measure = 0.1;
+float Q_bias = 0.003;
+float R_measure = 0.03;
 
 /* Create the Kalman instances */
 Kalman kalmanX; 
 Kalman kalmanY;
 
+/* VESC */ 
+VescUart UART;
 /* IMU Data */
 double accX, accY, accZ;
 double gyroX, gyroY, gyroZ;
@@ -23,6 +28,14 @@ double kalAngleX, kalAngleY;                // Calculated angle using a Kalman f
 uint32_t timer;
 uint8_t i2cData[14];                        // Buffer for I2C data
 
+//Define Variables we'll be connecting to
+double Setpoint, Output;
+
+//Specify the links and initial tuning parameters
+//double Kp=3.5, Ki=0.005, Kd=2.05;
+double Kp=1.0, Ki=0.0, Kd=0.0;
+PID myPID(&kalAngleX, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
+
 void setup() 
 {
   Serial.begin(115200);
@@ -33,12 +46,20 @@ void setup()
   TWBR = ((F_CPU / 400000UL) - 16) / 2;     // Set I2C frequency to 400kHz
 #endif
   setupKalmanFilter();
+  setupPID();
+  Setpoint = 0.1;
+  //turn the PID on
+  myPID.SetMode(AUTOMATIC);
+  myPID.SetOutputLimits(-MAX_DUTY_CYCLE, MAX_DUTY_CYCLE);
 }
 void loop()
 {
   updateKalmanAnglesXY();
-  Serial.print(kalAngleX); Serial.print("\t");
-//  Serial.print(kalAngleY); Serial.print("\t");
+  myPID.Compute();
+  UART.setDuty(Output/100.0);
+  Serial.print(kalAngleX); Serial.print("\t"); // X 
+  Serial.print(kalAngleY); Serial.print("\t"); // Not really needed
+  Serial.print(Output/100.0);Serial.print("\t"); // PID controller output
   Serial.print("\n");
   delay(1);
 }
@@ -94,6 +115,12 @@ void setupKalmanFilter()
   kalmanX.setQangle(Q_angle);kalmanY.setQangle(Q_angle);
   kalmanX.setQbias(Q_bias);kalmanY.setQbias(Q_bias);
   kalmanX.setRmeasure(R_measure);kalmanY.setRmeasure(R_measure);
+}
+void setupPID()
+{
+  VESC_SERIAL_PORT.begin(115200);
+  while (!Serial) {;}
+  UART.setSerialPort(&Serial3);
 }
 void updateKalmanAnglesXY() 
 {
