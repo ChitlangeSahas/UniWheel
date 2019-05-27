@@ -1,2 +1,1 @@
-# twoKidsWanToDoubleBoneCount
-Huh? Top secret. 
+Code Repository for the Unicycle Project
