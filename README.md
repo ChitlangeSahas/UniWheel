@@ -1,6 +1,6 @@
 Code Repository for the Unicycle Project
 
 Contains:
-        - NodeMCU Code 
-        - Android App Code
-        - CAD Files Inventor
+        - NodeMCU Code \n
+        - Android App Code\n
+        - CAD Files Inventor\n
