@@ -1,7 +1,7 @@
-Code Repository for the Unicycle Project
+## Code Repository for the UniWheel Project
 
-Contains:
-        - NodeMCU Controller Code (C++) 
-        - Android App Code (Java)
-        - CAD Files Inventor (Inventor Professional 2019);
+Contains: <br />
+* NodeMCU Controller Code (__C++__) 
+* Android App Code (__Java__)
+* CAD Files Inventor (__Inventor Professional 2019__);
 
