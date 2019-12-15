@@ -1,4 +1,11 @@
 # UniWheel - A DIY self balancing mobility vehicle
+
+<p>
+<img src="https://www.arduino.cc/en/uploads/Trademark/ArduinoCommunityLogo.png" height=50>      <img src="https://www.scan2cad.com/wp-content/uploads/2017/08/autodesk-inventor-logo-650x187.png" height=50>       <img src="https://source.android.com/setup/images/Android_symbol_green_RGB.png" height=60>
+ </p>
+<br>
+<br>
+
 *I built this project over 9 month time period, going from the ideation to the prototype.*
 
 ### Contains: 
